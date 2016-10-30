@@ -1,0 +1,183 @@
+
+
+Domain accounts and SPNs
+========================
+For this PoC I asked for the machines to have the permissions and ran IIS as Local System Account.
+If the service is to log on as a domain user and be allowed to delegate: that domain user account needs the permissions and an SPN created for it. WCF clients include the server SPN in there communications, thereby specifying which AD entity may impersonate/delegate for them.
+
+
+
+Instructions for System Admins to configure the Web Application for Constrained Delegation in AD:
+=================================================================================================
+In this step, you configure Active Directory to allow your Web application to use constrained delegation to access a remote WCF service. Constrained delegation allows the Web application to pass the identity of the original user to the WCF service.
+If your ASP.NET application runs using the Network Service machine account, you must enable constrained delegation for your Web server computer. However, if your ASP.NET application runs under a custom domain account, you must enable protocol transition and constrained delegation for the custom domain account.
+This how-to article assumes that you are running your Web application under the Network Service machine account.
+1.	Start the Microsoft Management Console (MMC) Active Directory Users and Computers snap-in.
+2.	In the left pane of the MMC snap-in, click the Computers node.
+3.	In the right pane, double-click your Web server computer to display the Properties dialog box.
+4.	On the Delegation tab of the Properties window for the Web server computer, Do not trust the computer for delegation is selected by default. To use constrained delegation, select Trust this computer for delegation to specified services only.
+You specify precisely which service or services can be accessed in the bottom pane.
+5.	Beneath Trust this computer for delegation to specified services only, select Use Kerberos only.
+6.	Click Add.
+The Add Services dialog box appears.
+7.	Click Users or computers.
+8.	In the Select Users or Computers dialog box, type the name of your WCF service computer if you are running using Network Service. Alternatively, if you are running WCF by using a custom domain account, enter that account name instead. Click OK.
+You will see all the SPNs configured for the selected user or computer account.
+9.	To restrict access to the WCF service, select the HOST service, and then click OK.
+
+
+
+
+Some required software on the WCF server:
+=========================================
+.NET Framework version 4.6.1 installed - download offline installer from:
+https://www.microsoft.com/en-us/download/details.aspx?id=49982
+
+
+Windows Add/Remove Features:
+============================
+(-) Under Features/.NET Framework 4.5 Features/  -  Enable WCF Service
+          This also installs Web Server (IIS)/Web Server/Application Development/...
+(-) Under Server Roles/Web Server (IIS)/Security/  - Enable Windows Authentication
+
+
+
+IIS manager
+===========
+On the web server OR web application level
+(-) Disabled all authentication types except Windows Authentication.
+(-) In Windows Authentication remove all providers except "Negotial:Kerberos"
+(-) In Windows Authentication advanced settings : Disable kernel mode authentication.
+
+
+In the Application Pool: Advanced Settings : set Identity to Network Service
+(This is the account with AD permission to delegate i.e. the SPN.)
+
+
+
+
+Some references
+===============
+Using Impersonation with Transport Security
+https://msdn.microsoft.com/en-us/library/ms788971(v=vs.110).aspx
+
+Adding windows authentication to IIS
+https://www.iis.net/configreference/system.webserver/security/authentication/windowsauthentication/providers/add
+
+Connecting with SoapUI
+https://www.soapui.org/soap-and-wsdl/spnego/kerberos-authentication.html
+
+
+Commands to generate some proxies
+=================================
+cd "C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.6.1 Tools"
+svcutil.exe http://DOMAIN_SERVER_NAME:38001/WidgetAppService.svc?wsdl /out:C:\temp\DomService1Proxy
+svcutil.exe http://BUSINESS_SERVER_NAME:28001/WidgetBusService.svc?wsdl /out:C:\temp\BusService1Proxy
+svcutil.exe http://APP_SERVER_NAME:18001/WidgetAppService.svc?wsdl /out:C:\temp\AppService1Proxy
+
+
+
+
+C# code to create a channel on the client side:
+===============================================
+/// <summary>
+/// Creates a Kerberos client Channel (proxy) to call the web service.
+/// </summary>
+/// <typeparam name="T">Contract Interface of the service</typeparam>
+/// <param name="endpointAddress">Endpoint URL of the service</param>
+/// <param name="spnIdentity">SPN for Kerberos Auth</param>
+/// <returns>Created channel</returns>
+public static T CreateBasicHttpKerberosClient<T>(string endpointAddress, string spnIdentity)
+{
+  var kerberosBinding = new BasicHttpBinding();
+  kerberosBinding.Security.Mode = BasicHttpSecurityMode.TransportCredentialOnly;
+
+  //Set transport security
+  kerberosBinding.Security.Transport.ClientCredentialType = HttpClientCredentialType.Windows;
+  kerberosBinding.Security.Transport.ProxyCredentialType = HttpProxyCredentialType.None;
+
+  //Create endpoint with spn identity
+  var endpointAddr = new EndpointAddress(
+      new Uri(endpointAddress),
+      EndpointIdentity.CreateSpnIdentity(spnIdentity));
+
+  //Configure channel factory with transport/message/endpoint
+  var factory = new ChannelFactory<T>(kerberosBinding, endpointAddr);
+  //Need to impersonate service account of the service.
+  factory.Credentials.Windows.AllowedImpersonationLevel =
+    System.Security.Principal.TokenImpersonationLevel.Delegation;
+
+  //Return the created client channel
+  return factory.CreateChannel();
+}
+
+
+
+Example Web.config file: (see <appSettings> for client side config)
+===================================================================
+<?xml version="1.0"?>
+<configuration>
+
+  <appSettings>
+    <add key="aspnet:UseTaskFriendlySynchronizationContext" value="true" />
+    <add key="WidgetBusServiceUrl" value="http://BUSINESS_SERVER_NAME:28001/WidgetBusService.svc" />
+    <add key="WidgetBusServiceSpn" value="HOST/BUSINESS_SERVER_NAME" />
+    <add key="WidgetDomServiceUrl" value="http://DOMAIN_SERVER_NAME:38001/WidgetDomService.svc" />
+    <add key="WidgetDomServiceSpn" value="HOST/DOMAIN_SERVER_NAME" />
+  </appSettings>
+  
+  <system.web>
+    <compilation debug="true" targetFramework="4.6.1" />
+    <httpRuntime targetFramework="4.6.1"/>
+  </system.web>
+  
+  <system.serviceModel>
+
+    <bindings>
+      <basicHttpBinding>
+        <binding name="BasicHttpBindingWindows">
+          <security mode="TransportCredentialOnly">
+            <transport clientCredentialType="Windows" />
+          </security>
+        </binding>
+      </basicHttpBinding>
+    </bindings>
+
+    <services>
+      <service name="AppService1.WidgetAppService">
+        <endpoint address=""
+                  binding="basicHttpBinding" bindingConfiguration="BasicHttpBindingWindows"
+                  contract="AppService1.Contract.IWidgetAppService">
+          <identity>
+            <servicePrincipalName value="HOST/APP_SERVER_NAME" />
+            <dns value="" />
+          </identity>
+        </endpoint>
+        <endpoint address="mex" binding="mexHttpBinding" contract="IMetadataExchange" />
+      </service>
+    </services>
+
+    <behaviors>
+      <serviceBehaviors>
+        <behavior>
+          <serviceMetadata httpGetEnabled="true" />
+          <serviceDebug includeExceptionDetailInFaults="true" />
+          <serviceAuthorization impersonateCallerForAllOperations="true" />
+        </behavior>
+      </serviceBehaviors>
+    </behaviors>
+
+    <serviceHostingEnvironment aspNetCompatibilityEnabled="true" multipleSiteBindingsEnabled="true" />
+    
+  </system.serviceModel>
+  
+  <system.webServer>
+    <modules runAllManagedModulesForAllRequests="true"/>
+    <directoryBrowse enabled="true"/>
+    <validation validateIntegratedModeConfiguration="true"/>
+  </system.webServer>
+
+</configuration>
+
+
+

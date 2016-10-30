@@ -1,0 +1,53 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppService1", "AppService1\AppService1.csproj", "{D7BD85F9-003A-4030-B89D-5C60F37C435F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{2430DCA4-DCEB-4399-85F9-BD8BCBCF6FC5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppService1.Contract", "AppService1.Contract\AppService1.Contract.csproj", "{3D3FAA85-6AAB-4CCA-85FE-6F7E96CAAC25}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Util", "..\Util\Util\Util.csproj", "{32869BED-8FE1-4B0C-8A94-1B6CD16898F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusService1.Contract", "..\BusService1\BusService1.Contract\BusService1.Contract.csproj", "{619685EF-1CFC-419F-8CB7-7A740B28C1E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomService1.Contract", "..\DomService1\DomService1.Contract\DomService1.Contract.csproj", "{E135A5BB-08B5-4881-9526-B35384126967}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D7BD85F9-003A-4030-B89D-5C60F37C435F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7BD85F9-003A-4030-B89D-5C60F37C435F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7BD85F9-003A-4030-B89D-5C60F37C435F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7BD85F9-003A-4030-B89D-5C60F37C435F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D3FAA85-6AAB-4CCA-85FE-6F7E96CAAC25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D3FAA85-6AAB-4CCA-85FE-6F7E96CAAC25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D3FAA85-6AAB-4CCA-85FE-6F7E96CAAC25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D3FAA85-6AAB-4CCA-85FE-6F7E96CAAC25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32869BED-8FE1-4B0C-8A94-1B6CD16898F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32869BED-8FE1-4B0C-8A94-1B6CD16898F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32869BED-8FE1-4B0C-8A94-1B6CD16898F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32869BED-8FE1-4B0C-8A94-1B6CD16898F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{619685EF-1CFC-419F-8CB7-7A740B28C1E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{619685EF-1CFC-419F-8CB7-7A740B28C1E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{619685EF-1CFC-419F-8CB7-7A740B28C1E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{619685EF-1CFC-419F-8CB7-7A740B28C1E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E135A5BB-08B5-4881-9526-B35384126967}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E135A5BB-08B5-4881-9526-B35384126967}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E135A5BB-08B5-4881-9526-B35384126967}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E135A5BB-08B5-4881-9526-B35384126967}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{32869BED-8FE1-4B0C-8A94-1B6CD16898F7} = {2430DCA4-DCEB-4399-85F9-BD8BCBCF6FC5}
+		{619685EF-1CFC-419F-8CB7-7A740B28C1E1} = {2430DCA4-DCEB-4399-85F9-BD8BCBCF6FC5}
+		{E135A5BB-08B5-4881-9526-B35384126967} = {2430DCA4-DCEB-4399-85F9-BD8BCBCF6FC5}
+	EndGlobalSection
+EndGlobal

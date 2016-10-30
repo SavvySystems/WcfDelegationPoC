@@ -1,0 +1,20 @@
+﻿<Window x:Class="Klient.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Klient"
+        mc:Ignorable="d"
+        Title="Klient" Height="369.643" Width="662.5">
+  <Grid Margin="0,0,0,0">
+    <TextBox x:Name="textBoxInput" HorizontalAlignment="Left" Height="41" Margin="87,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="478" FontSize="24"/>
+    <Button x:Name="buttonNewValue" Content="New GUID" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="72" Click="buttonNewValue_Click" RenderTransformOrigin="0.464,6.812" Height="41"/>
+    <Button x:Name="buttonCallApp" Content="App" HorizontalAlignment="Left" Margin="10,60,0,0" VerticalAlignment="Top" Width="80" Click="buttonCallApp_Click" RenderTransformOrigin="0.464,6.812" Height="22"/>
+    <Button x:Name="buttonCallBus" Content="Bus" HorizontalAlignment="Left" Margin="95,60,0,0" VerticalAlignment="Top" Width="80" Click="buttonCallBus_Click" RenderTransformOrigin="0.464,6.812" Height="22"/>
+    <Button x:Name="buttonCallDom" Content="Dom" HorizontalAlignment="Left" Margin="180,60,0,0" VerticalAlignment="Top" Width="80" Click="buttonCallDom_Click" RenderTransformOrigin="0.464,6.812" Height="22"/>
+    <Button x:Name="buttonCallAppBus" Content="App-&gt;Bus" HorizontalAlignment="Left" Margin="265,60,0,0" VerticalAlignment="Top" Width="80" Click="buttonCallAppBus_Click" RenderTransformOrigin="0.464,6.812" Height="22"/>
+    <Button x:Name="buttonCallBusDom" Content="Bus-&gt;Dom" HorizontalAlignment="Left" Margin="350,60,0,0" VerticalAlignment="Top" Width="80" Click="buttonCallBusDom_Click" RenderTransformOrigin="0.464,6.812" Height="22"/>
+    <Button x:Name="buttonCallAppBusDom" Content="App-&gt;Bus-&gt;Dom" HorizontalAlignment="Left" Margin="435,60,0,0" VerticalAlignment="Top" Width="130" IsDefault="True" Click="buttonCallAppBusDom_Click" RenderTransformOrigin="0.464,6.812" Height="22"/>
+    <TextBlock x:Name="textBlockResult" HorizontalAlignment="Left" Margin="10,90,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="236" Width="634" RenderTransformOrigin="0.543,0.462"/>
+  </Grid>
+</Window>
